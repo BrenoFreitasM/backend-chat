@@ -61,46 +61,49 @@ mongoose
 
     // Rota de verificação de autenticação
     app.get('/api/auth/verify', (req, res) => {
-      console.log('----- Verificadno ----')
-      const token = req.headers.authorization?.split(' ')[1];
-
+      
+      //const token = req.headers.authorization?.split(' ')[1];
+      const token = req.headers.authorization;
+      
       if (!token) {
         return res.status(401).json({ message: 'Token não encontrado' });
       }
 
       try {
         jwt.verify(token, 'seu_segredo_jwt');
+        console.log('token válido')
         res.json({ valid: true });
       } catch (error) {
+        console.log('token não válido')
         res.json({ valid: false });
       }
     });
 
 
-    // // Criar servidor WebSocket
-    // const wss = new WebSocketServer({ port: 8080 });
+    // Criar servidor WebSocket
+    const wss = new WebSocketServer({ port: 8080 });
 
-    // wss.on("connection", (ws) => {
-    //   console.log("🟢 Novo cliente conectado");
+    wss.on("connection", (ws) => {
+      console.log("🟢 Novo cliente conectado");
 
-    //   ws.on("message", async (data) => {
-    //     const message = JSON.parse(data);
-    //     console.log("📩 Mensagem recebida:", message);
+      ws.on("message", async (data) => {
+        const message = JSON.parse(data);
+        console.log("📩 Mensagem recebida:", message);
 
-    //     // Salvar no MongoDB
-    //     const newMessage = new Message(message);
-    //     await newMessage.save();
+        // Salvar no MongoDB
+        const newMessage = new Message(message);
+        await newMessage.save();
 
-    //     // Enviar mensagem para todos os clientes conectados
-    //     wss.clients.forEach((client) => {
-    //       if (client.readyState === 1) {
-    //         client.send(JSON.stringify(message));
-    //       }
-    //     });
-    //   });
+        // Enviar mensagem para todos os clientes conectados
+        wss.clients.forEach((client) => {
+          if (client.readyState === 1) {
+            client.send(JSON.stringify(message));
+          }
+        });
+      });
 
-    //   ws.on("close", () => console.log("🔴 Cliente desconectado"));
-    // });
+      ws.on("close", () => console.log("🔴 Cliente desconectado"));
+    });
 
     app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
 
