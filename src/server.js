@@ -72,7 +72,9 @@ mongoose
       try {
         jwt.verify(token, 'seu_segredo_jwt');
         console.log('token válido')
-        res.json({ valid: true });
+        res.json({
+          valid: true,
+        });
       } catch (error) {
         console.log('token não válido')
         res.json({ valid: false });
