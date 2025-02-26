@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/auth-route.js";
+import userRoutes from "./routes/user-route.js";
 import messageRoutes from "./routes/message-route.js";
 import { wss } from "./websocket/wss.js";
 
@@ -19,6 +20,7 @@ connectDB();
 
 // Rotas
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/messages", messageRoutes);
 
 // Inicializar servidor

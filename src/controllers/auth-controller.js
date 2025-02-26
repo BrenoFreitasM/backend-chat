@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
-import { findUserByEmail } from "../repositories/user-repository.js";
+import userRepository from "../repositories/user-repository.js";
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await findUserByEmail(email);
+    const user = await userRepository.findUserByEmail(email);
     if (!user || user.password !== password) {
       return res.status(401).json({ message: "Credenciais inválidas" });
     }
